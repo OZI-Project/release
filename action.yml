@@ -28,6 +28,7 @@ runs:
     env:
       check: ${{ steps.release.outputs.released == 'true' || inputs.python-dist != 'py310' }}
     run: echo "created=${{ env.check }}" >> $GITHUB_OUTPUT
+    shell: bash
 
   - uses: actions/download-artifact@v4
     if: steps.draft.outputs.created == 'true' && inputs.python-dist != 'py310'
@@ -36,11 +37,13 @@ runs:
   - name: Move artifact
     if: steps.draft.outputs.created == 'true' && inputs.python-dist != 'py310'
     run: cp -a ${{ inputs.python-dist }}/. ./
+    shell: bash
 
   - name: Set version
     if: steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true'
     id: version
     run: echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+    shell: bash
 
   - name: Set up Python 3.10
     if: inputs.python-dist == 'py310'
@@ -74,6 +77,7 @@ runs:
         python -m pip install --user --upgrade setuptools_scm
         python -m pip install --user --upgrade ninja
         python -m pip install --user --upgrade pip-tools
+    shell: bash
 
   - name: Configure git repository
     if: inputs.python-dist == 'py310'
@@ -81,6 +85,7 @@ runs:
         git config --global user.email "noreply@oziproject.dev"
         git config --global user.name "OZI Packaging"
         rm -rf .git/COMMIT_EDITMSG
+    shell: bash
 
   - name: Build wheel
     if: steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true'
@@ -90,6 +95,7 @@ runs:
       python -m build -w
       python -m pyc_wheel dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-py3-none-any.whl
       mv dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-py3-none-any.whl dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-${{ inputs.python-dist }}-none-any.whl
+    shell: bash
 
   - name: Build sdist
     id: sdist
@@ -99,6 +105,7 @@ runs:
       pip install dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-${{ inputs.python-dist }}-none-any.whl
       meson dist -C build --formats gztar --no-tests
       mv build/meson-dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.tar.gz dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.tar.gz 
+    shell: bash
 
   - uses: sigstore/gh-action-sigstore-python@v2.1.1
     if: inputs.python-dist == 'py312'
@@ -117,6 +124,7 @@ runs:
   - name: Move dist-info file
     if: steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true'
     run: mv dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.dist-info sig/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-${{ inputs.python-dist }}.dist-info
+    shell: bash
 
   - uses: actions/upload-artifact@v4
     if: inputs.python-dist == 'py310' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
