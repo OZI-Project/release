@@ -8,7 +8,9 @@ inputs:
     description: "GitHub workflow-generated token"
     required: true
 outputs:
-  drafted: ${{ steps.draft.outputs.created }}
+  drafted:
+    description: "a release has been drafted"
+    value: ${{ steps.draft.outputs.created }}
 runs:
   using: "composite"
   steps:
