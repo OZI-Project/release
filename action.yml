@@ -1,3 +1,5 @@
+name: ozi-release
+description: "OZI release draft action."
 inputs:
   python-dist:
     description: "python dist version string e.g. pyXY"
