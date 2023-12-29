@@ -4,6 +4,9 @@ inputs:
   python-dist:
     description: "python dist version string e.g. pyXY"
     required: true
+  github-token:
+    description: "GitHub workflow-generated token"
+    required: true
 outputs:
   drafted: ${{ steps.draft.outputs.created }}
 runs:
@@ -13,7 +16,7 @@ runs:
   - uses: actions/checkout@v4
     if: inputs.python-dist == 'py310'
     with:
-      token: ${{ secrets.GITHUB_TOKEN }}
+      token: ${{ inputs.github-token }}
       fetch-depth: 0
 
   - name: Python Semantic Release
@@ -21,7 +24,7 @@ runs:
     if: inputs.python-dist == 'py310'
     uses: python-semantic-release/python-semantic-release@v8.7.0
     with:
-      github_token: ${{ secrets.GITHUB_TOKEN }}
+      github_token: ${{ inputs.github-token }}
 
   - name: Pass release draft status to job
     id: draft
