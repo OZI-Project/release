@@ -130,11 +130,13 @@ runs:
     if: steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true'
     run: |
       mv dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-${{ inputs.python-dist }}-none-any.whl.sigstore sig/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-${{ inputs.python-dist }}-none-any.whl.sigstore
+    shell: bash
 
   - name: Move sdist signing file
     if: inputs.python-dist == 'py312'
     run: |
       mv dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.tar.gz.sigstore sig/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.tar.gz.sigstore
+    shell: bash
 
   - name: Move dist-info file
     if: steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true'
