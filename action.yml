@@ -27,7 +27,7 @@ runs:
   - name: Python Semantic Release
     id: release
     if: inputs.python-dist == 'py310'
-    uses: python-semantic-release/python-semantic-release@v8.7.0
+    uses: python-semantic-release/python-semantic-release@v8.7.2
     with:
       github_token: ${{ inputs.github-token }}
 
