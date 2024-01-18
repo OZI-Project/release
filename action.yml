@@ -143,7 +143,7 @@ runs:
       rm -r dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.dist-info
     shell: bash
 
-  - uses: actions/upload-artifact@v4.1.0
+  - uses: actions/upload-artifact@v4.2.0
     if: inputs.python-dist == 'py310' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
     with:
       name: 'py311'
@@ -151,7 +151,7 @@ runs:
         !build/
         ./
 
-  - uses: actions/upload-artifact@v4.1.0
+  - uses: actions/upload-artifact@v4.2.0
     if: inputs.python-dist == 'py311' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
     with:
       name: 'py312'
@@ -160,7 +160,7 @@ runs:
         !build/
         ./
 
-  - uses: actions/upload-artifact@v4.1.0
+  - uses: actions/upload-artifact@v4.2.0
     if: inputs.python-dist == 'py312' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
     with:
       path: |
