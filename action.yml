@@ -11,6 +11,9 @@ outputs:
   drafted:
     description: "a release has been drafted"
     value: ${{ steps.draft.outputs.created }}
+  hashes:
+    description: "release file hashes for provenance"
+    value: ${{ steps.hash.outputs.hashes }}
 runs:
   using: "composite"
   steps:
@@ -142,6 +145,16 @@ runs:
     run: |
       rm -r dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.dist-info
     shell: bash
+
+  - name: Generate hashes for provenance
+    shell: bash
+    id: hash
+    if: inputs.python-dist == 'py312'
+    run: |
+      # sha256sum generates sha256 hash for all artifacts.
+      # base64 -w0 encodes to base64 and outputs on a single line.
+      # sha256sum artifact1 artifact2 ... | base64 -w0
+      echo "hashes=$(sha256sum ./dist/* | base64 -w0)" >> $GITHUB_OUTPUT
 
   - uses: actions/upload-artifact@v4.2.0
     if: inputs.python-dist == 'py310' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
