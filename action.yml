@@ -108,21 +108,21 @@ runs:
 
   - name: Compile wheel
     if: inputs.python-dist == 'py310' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
-    uses: OZI-Project/pyc_wheel@942c33e5e5745d0f6b86c84c660bc9dba09608a9
+    uses: OZI-Project/pyc_wheel@01be4e2c2c04f323de3889ef6378332876515136
     with:
       filename: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-py3-none-any.whl
       python-version: '3.10'
   
   - name: Compile wheel
     if: inputs.python-dist == 'py311' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
-    uses: OZI-Project/pyc_wheel@942c33e5e5745d0f6b86c84c660bc9dba09608a9
+    uses: OZI-Project/pyc_wheel@01be4e2c2c04f323de3889ef6378332876515136
     with:
       filename: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-py3-none-any.whl
       python-version: '3.11'
 
   - name: Compile wheel
     if: inputs.python-dist == 'py312' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
-    uses: OZI-Project/pyc_wheel@942c33e5e5745d0f6b86c84c660bc9dba09608a9
+    uses: OZI-Project/pyc_wheel@01be4e2c2c04f323de3889ef6378332876515136
     with:
       filename: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-py3-none-any.whl
       python-version: '3.12'
