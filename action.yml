@@ -122,7 +122,7 @@ runs:
 
   - name: Compile wheel
     if: inputs.python-dist == 'py312' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
-    uses: OZI-Project/pyc_wheel@1.2.8
+    uses: OZI-Project/pyc_wheel@831843c846af65c5166c90f3b2afc0cb0e3710d0
     with:
       filename: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-py3-none-any.whl
       python-version: '3.12'
