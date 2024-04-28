@@ -108,19 +108,19 @@ runs:
 
   - name: Compile wheel
     if: inputs.python-dist == 'py310' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
-    uses: OZI-Project/pyc_wheel-cp310@1.4.3
+    uses: OZI-Project/pyc_wheel-cp310@1.4.4
     with:
       filename: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-py3-none-any.whl
 
   - name: Compile wheel
     if: inputs.python-dist == 'py311' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
-    uses: OZI-Project/pyc_wheel-cp311@1.4.3
+    uses: OZI-Project/pyc_wheel-cp311@1.4.4
     with:
       filename: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-py3-none-any.whl
 
   - name: Compile wheel
     if: inputs.python-dist == 'py312' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
-    uses: OZI-Project/pyc_wheel-cp312@1.4.3
+    uses: OZI-Project/pyc_wheel-cp312@1.4.4
     with:
       filename: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-py3-none-any.whl
 
