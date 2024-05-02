@@ -81,9 +81,8 @@ runs:
     run: |
         python -m pip install --upgrade pip
         python -m pip install --user --upgrade build
-        python -m pip install --user --upgrade pyc_wheel
         python -m pip install --user --upgrade meson
-        python -m pip install --user --upgrade mesonpep517
+        python -m pip install --user --upgrade OZI.build
         python -m pip install --user --upgrade setuptools_scm
         python -m pip install --user --upgrade ninja
         python -m pip install --user --upgrade pip-tools
@@ -99,45 +98,36 @@ runs:
     shell: bash
 
   - name: Build wheel
-    if: steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true'
+    if: inputs.python-dist != 'py312' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
     id: wheel
     run: |
-      meson setup build
       python -m build -w
+    shell: bash
+
+  - name: Build wheel and sdist
+    if: inputs.python-dist == 'py312' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
+    id: sdist
+    run: |
+      python -m build
     shell: bash
 
   - name: Compile wheel
     if: inputs.python-dist == 'py310' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
     uses: OZI-Project/pyc_wheel-cp310@1.4.4
     with:
-      filename: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-py3-none-any.whl
+      filename: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-*310-*.whl
 
   - name: Compile wheel
     if: inputs.python-dist == 'py311' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
     uses: OZI-Project/pyc_wheel-cp311@1.4.4
     with:
-      filename: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-py3-none-any.whl
+      filename: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-*311-*.whl
 
   - name: Compile wheel
     if: inputs.python-dist == 'py312' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
     uses: OZI-Project/pyc_wheel-cp312@1.4.4
     with:
-      filename: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-py3-none-any.whl
-
-  - name: Rename wheel
-    run: |
-      mv dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-py3-none-any.whl dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-${{ inputs.python-dist }}-none-any.whl
-    shell: bash
-
-  - name: Build sdist
-    id: sdist
-    if: inputs.python-dist == 'py312'
-    run: |
-      meson setup build --reconfigure
-      pip install dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-${{ inputs.python-dist }}-none-any.whl
-      meson dist -C build --formats gztar --no-tests
-      mv build/meson-dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.tar.gz dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.tar.gz 
-    shell: bash
+      filename: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-*312-*.whl
 
   - uses: sigstore/gh-action-sigstore-python@v2.1.1
     if: inputs.python-dist == 'py312'
@@ -147,27 +137,21 @@ runs:
       upload-signing-artifacts: true
 
   - uses: sigstore/gh-action-sigstore-python@v2.1.1
-    if: steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true'
+    if: inputs.python-dist == 'py312' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
     with:
-      inputs: dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-${{ inputs.python-dist }}-none-any.whl
+      inputs: dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-*.whl
       upload-signing-artifacts: true
 
-  - name: Move wheel signing file
+  - name: Move wheel signing files
     if: steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true'
     run: |
-      mv dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-${{ inputs.python-dist }}-none-any.whl.sigstore sig/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}-${{ inputs.python-dist }}-none-any.whl.sigstore
+      mv dist/*.whl.sigstore sig
     shell: bash
 
   - name: Move sdist signing file
     if: inputs.python-dist == 'py312'
     run: |
       mv dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.tar.gz.sigstore sig/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.tar.gz.sigstore
-    shell: bash
-
-  - name: Remove dist-info file
-    if: steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true'
-    run: |
-      rm -r dist/${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.dist-info
     shell: bash
 
   - name: Generate hashes for provenance
