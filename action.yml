@@ -100,6 +100,7 @@ runs:
     if: inputs.python-dist != 'py312' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
     id: wheel
     run: |
+      meson setup build
       python -m build -w
     shell: bash
 
@@ -107,6 +108,7 @@ runs:
     if: inputs.python-dist == 'py312' && (steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true')
     id: sdist
     run: |
+      meson setup build
       python -m build
     shell: bash
 
