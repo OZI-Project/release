@@ -143,7 +143,7 @@ runs:
       upload-signing-artifacts: true
 
   - name: Move wheel signing files
-    if: steps.release.outputs.released == 'true' || steps.draft.outputs.created == 'true'
+    if: inputs.python-dist == 'py312'
     run: |
       mv dist/*.whl.sigstore sig
     shell: bash
