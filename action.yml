@@ -94,7 +94,6 @@ runs:
         git config --global user.email "noreply@oziproject.dev"
         git config --global user.name "OZI Packaging"
         rm -rf .git/COMMIT_EDITMSG
-        mkdir sig
     shell: bash
 
   - name: Build wheel
@@ -145,6 +144,7 @@ runs:
   - name: Move wheel signing files
     if: inputs.python-dist == 'py312'
     run: |
+      mkdir sig
       mv dist/*.whl.sigstore sig
     shell: bash
 
