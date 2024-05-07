@@ -20,7 +20,7 @@ outputs:
 runs:
   using: "composite"
   steps:
-  - uses: actions/checkout@v4.1.3
+  - uses: actions/checkout@v4.1.5
     if: inputs.python-dist == 'py310'
     with:
       token: ${{ inputs.github-token }}
