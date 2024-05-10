@@ -1,2 +1,2 @@
 # ozi-release
-OZI release draft action.
+OZI release build action.
