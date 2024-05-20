@@ -2,7 +2,7 @@ name: ozi-release
 description: "OZI release draft action."
 inputs:
   python-dist:
-    description: "python dist version string e.g. pyXY"
+    description: "python dist version string e.g. bugfix1, bugfix2, security, prerelease"
     required: true
   github-token:
     description: "GitHub workflow-generated token"
@@ -17,6 +17,11 @@ outputs:
 runs:
   using: "composite"
   steps:
+  - name: Get OZI specification API
+    id: ozi-support
+    run: |
+      echo "python-version=$( curl -L https://oziproject.dev/api.json | jq -c '.spec.python.support.${{ inputs.python-dist }}' )" >> "$GITHUB_OUTPUT"
+    shell: bash
 
   - uses: actions/download-artifact@v4
     name: ${{ inputs.python-dist }}
@@ -25,28 +30,23 @@ runs:
     run: cp -a ${{ inputs.python-dist }}/. ./
     shell: bash
 
-  - name: Set up Python 3.10
-    if: inputs.python-dist == 'py310'
+  - name: Set up Python ${{ steps.ozi-support.python-version }}
+    if: inputs.python-dist != 'prerelease'
     uses: actions/setup-python@v5
     with:
       cache: 'pip'
-      python-version: '3.10'
+      python-version: ${{ steps.ozi-support.python-version }}
 
-  - name: Set up Python 3.11
-    if: inputs.python-dist == 'py311'
+  - name: Set up Python ${{ steps.ozi-support.python-version }}
+    id: maybe-prerelease
+    if: inputs.python-dist == 'prerelease'
     uses: actions/setup-python@v5
     with:
       cache: 'pip'
-      python-version: '3.11'
+      python-version: ${{ steps.ozi-support.python-version }}
+      allow-prereleases: true
 
-  - name: Set up Python 3.12 
-    if: inputs.python-dist == 'py312'
-    uses: actions/setup-python@v5
-    with:
-      cache: 'pip'
-      python-version: '3.12'
-
-  - name: Install ${{ inputs.python-dist }} build dependencies
+  - name: Install build dependencies
     run: |
         python -m pip install --upgrade pip
         python -m pip install --user --upgrade build
@@ -58,7 +58,7 @@ runs:
     shell: bash
 
   - name: Configure git repository
-    if: inputs.python-dist == 'py310'
+    if: inputs.python-dist == 'security'
     run: |
         git config --global user.email "noreply@oziproject.dev"
         git config --global user.name "OZI Packaging"
@@ -66,41 +66,49 @@ runs:
     shell: bash
 
   - name: Build wheel
-    if: inputs.python-dist != 'py312'
+    if: contains(fromJSON('["bugfix1", "bugfix2", "security"]'), inputs.python-dist)
     id: wheel
     run: |
       python -m build -w
     shell: bash
 
+  - name: Build prerelease wheel
+    if: inputs.python-dist == 'prerelease'
+    continue-on-error: true
+    id: wheel-prerelease
+    run: |
+      python -m build -w
+    shell: bash
+
   - name: Build wheel and sdist
-    if: inputs.python-dist == 'py312'
+    if: inputs.python-dist == 'bugfix1'
     id: sdist
     run: |
       python -m build
     shell: bash
 
   - uses: sigstore/gh-action-sigstore-python@v2.1.1
-    if: inputs.python-dist == 'py312'
+    if: inputs.python-dist == 'prerelease'
     with:
       inputs: dist/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz
       release-signing-artifacts: true
       upload-signing-artifacts: true
 
   - uses: sigstore/gh-action-sigstore-python@v2.1.1
-    if: inputs.python-dist == 'py312'
+    if: inputs.python-dist == 'prerelease'
     with:
       inputs: dist/${{ github.event.repository.name }}-${{ inputs.tag }}-*.whl
       upload-signing-artifacts: true
 
   - name: Move wheel signing files
-    if: inputs.python-dist == 'py312'
+    if: inputs.python-dist == 'prerelease'
     run: |
       mkdir sig
       mv dist/*.whl.sigstore sig
     shell: bash
 
   - name: Move sdist signing file
-    if: inputs.python-dist == 'py312'
+    if: inputs.python-dist == 'prerelease'
     run: |
       mv dist/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz.sigstore sig/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz.sigstore
     shell: bash
@@ -108,7 +116,7 @@ runs:
   - name: Generate hashes for provenance
     shell: bash
     id: hash
-    if: inputs.python-dist == 'py312'
+    if: inputs.python-dist == 'prerelease'
     run: |
       # sha256sum generates sha256 hash for all artifacts.
       # base64 -w0 encodes to base64 and outputs on a single line.
@@ -116,26 +124,35 @@ runs:
       echo "hashes=$(sha256sum ./dist/* | base64 -w0)" >> $GITHUB_OUTPUT
 
   - uses: actions/upload-artifact@v4.3.0
-    if: inputs.python-dist == 'py310'
+    if: inputs.python-dist == 'security'
     with:
-      name: 'py311'
+      name: 'bugfix2'
       path: |
         !build/
         ./
 
   - uses: actions/upload-artifact@v4.3.0
-    if: inputs.python-dist == 'py311'
+    if: inputs.python-dist == 'bugfix2'
     with:
-      name: 'py312'
+      name: 'bugfix1'
       path: |
-        !py311/
+        !bugfix2/
         !build/
         ./
 
   - uses: actions/upload-artifact@v4.3.0
-    if: inputs.python-dist == 'py312'
+    if: inputs.python-dist == 'bugfix1'
+    with:
+      name: 'prerelease'
+      path: |
+        !bugfix1/
+        !build/
+        ./
+
+  - uses: actions/upload-artifact@v4.3.0
+    if: inputs.python-dist == 'prerelease'
     with:
       path: |
-        !py312/
+        !prerelease/
         !build/
         ./
