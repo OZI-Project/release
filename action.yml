@@ -20,8 +20,7 @@ runs:
   - name: Get OZI specification API
     id: ozi-support
     run:
-      echo "API_JSON=$(curl -L https://oziproject.dev/api.json)" >> $GITHUB_ENV
-      echo "python-version=$( fromJson(env.API_JSON) | jq '.${{ inputs.python-dist }}' )" >> "$GITHUB_OUTPUT"
+      echo "python-version=fromJson( $( curl -L https://oziproject.dev/api.json | jq '.${{ inputs.python-dist }}' ) )" >> "$GITHUB_OUTPUT"
     shell: bash
 
   - uses: actions/download-artifact@v4
