@@ -19,7 +19,7 @@ runs:
   steps:
   - name: Get OZI specification API
     id: ozi-support
-    run:
+    run: |
       echo "python-version=$( curl -L https://oziproject.dev/api.json | jq -c '.spec.python.support.${{ inputs.python-dist }}' )" >> "$GITHUB_OUTPUT"
     shell: bash
 
@@ -38,6 +38,7 @@ runs:
       python-version: ${{ steps.ozi-support.python-version }}
 
   - name: Set up Python ${{ steps.ozi-support.python-version }}
+    id: maybe-prerelease
     if: inputs.python-dist == 'prerelease'
     uses: actions/setup-python@v5
     with:
@@ -79,27 +80,27 @@ runs:
     shell: bash
 
   - uses: sigstore/gh-action-sigstore-python@v2.1.1
-    if: inputs.python-dist == 'bugfix1'
+    if: inputs.python-dist == 'prerelease'
     with:
       inputs: dist/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz
       release-signing-artifacts: true
       upload-signing-artifacts: true
 
   - uses: sigstore/gh-action-sigstore-python@v2.1.1
-    if: inputs.python-dist == 'bugfix1'
+    if: inputs.python-dist == 'prerelease'
     with:
       inputs: dist/${{ github.event.repository.name }}-${{ inputs.tag }}-*.whl
       upload-signing-artifacts: true
 
   - name: Move wheel signing files
-    if: inputs.python-dist == 'bugfix1'
+    if: inputs.python-dist == 'prerelease'
     run: |
       mkdir sig
       mv dist/*.whl.sigstore sig
     shell: bash
 
   - name: Move sdist signing file
-    if: inputs.python-dist == 'bugfix1'
+    if: inputs.python-dist == 'prerelease'
     run: |
       mv dist/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz.sigstore sig/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz.sigstore
     shell: bash
@@ -107,20 +108,12 @@ runs:
   - name: Generate hashes for provenance
     shell: bash
     id: hash
-    if: inputs.python-dist == 'bugfix1'
+    if: inputs.python-dist == 'prerelease'
     run: |
       # sha256sum generates sha256 hash for all artifacts.
       # base64 -w0 encodes to base64 and outputs on a single line.
       # sha256sum artifact1 artifact2 ... | base64 -w0
       echo "hashes=$(sha256sum ./dist/* | base64 -w0)" >> $GITHUB_OUTPUT
-
-  - uses: actions/upload-artifact@v4.3.0
-    if: inputs.python-dist == 'prerelease'
-    with:
-      name: 'security'
-      path: |
-        !build/
-        ./
 
   - uses: actions/upload-artifact@v4.3.0
     if: inputs.python-dist == 'security'
@@ -142,7 +135,16 @@ runs:
   - uses: actions/upload-artifact@v4.3.0
     if: inputs.python-dist == 'bugfix1'
     with:
+      name: 'prerelease'
       path: |
         !bugfix1/
+        !build/
+        ./
+
+  - uses: actions/upload-artifact@v4.3.0
+    if: inputs.python-dist == 'prerelease'
+    with:
+      path: |
+        !prerelease/
         !build/
         ./
