@@ -39,7 +39,6 @@ runs:
 
   - name: Set up Python ${{ steps.ozi-support.python-version }}
     if: inputs.python-dist == 'prerelease'
-    continue-on-error: true
     uses: actions/setup-python@v5
     with:
       cache: 'pip'
