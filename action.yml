@@ -17,6 +17,13 @@ outputs:
 runs:
   using: "composite"
   steps:
+  - name: Get OZI specification API
+    id: ozi-support
+    run:
+      echo "API_JSON=$(curl -u USER:TOKEN https://oziproject.dev/api.json)" >> $GITHUB_ENV
+      python-version=$( fromJson(env.API_JSON) | jq '.${{ inputs.python-dist }}' )
+      echo "python-version=$python-version" >> "$GITHUB_OUTPUT"
+    shell: bash
 
   - uses: actions/download-artifact@v4
     name: ${{ inputs.python-dist }}
@@ -25,36 +32,22 @@ runs:
     run: cp -a ${{ inputs.python-dist }}/. ./
     shell: bash
 
-  - name: Set up Python 3.10
-    if: inputs.python-dist == 'security'
+  - name: Set up Python ${{ steps.ozi-support.python-version }}
+    if: inputs.python-dist != 'prerelease'
     uses: actions/setup-python@v5
     with:
       cache: 'pip'
-      python-version: '3.10'
+      python-version: ${{ steps.ozi-support.python-version }}
 
-  - name: Set up Python 3.11
-    if: inputs.python-dist == 'bugfix2'
-    uses: actions/setup-python@v5
-    with:
-      cache: 'pip'
-      python-version: '3.11'
-
-  - name: Set up Python 3.12
-    if: inputs.python-dist == 'bugfix1'
-    uses: actions/setup-python@v5
-    with:
-      cache: 'pip'
-      python-version: '3.12'
-
-  - name: Set up Python 3.13
+  - name: Set up Python ${{ steps.ozi-support.python-version }}
     if: inputs.python-dist == 'prerelease'
     uses: actions/setup-python@v5
     with:
       cache: 'pip'
-      python-version: '3.13'
+      python-version: ${{ steps.ozi-support.python-version }}
       allow-prereleases: true
 
-  - name: Install ${{ inputs.python-dist }} build dependencies
+  - name: Install build dependencies
     run: |
         python -m pip install --upgrade pip
         python -m pip install --user --upgrade build
