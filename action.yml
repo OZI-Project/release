@@ -66,8 +66,16 @@ runs:
     shell: bash
 
   - name: Build wheel
-    if: inputs.python-dist != 'bugfix1'
+    if: contains(fromJSON('["bugfix1", "bugfix2", "security"]'), inputs.python-dist)
     id: wheel
+    run: |
+      python -m build -w
+    shell: bash
+
+  - name: Build prerelease wheel
+    if: inputs.python-dist == 'prerelease'
+    continue-on-error: true
+    id: wheel-prerelease
     run: |
       python -m build -w
     shell: bash
