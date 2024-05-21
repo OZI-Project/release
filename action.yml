@@ -25,28 +25,26 @@ runs:
     shell: bash
 
   - uses: actions/download-artifact@v4
-    if: inputs.python-dist != 'security'
     name: ${{ inputs.python-dist }}
 
   - name: Move artifact
-    if: inputs.python-dist != 'security'
     run: cp -a ${{ inputs.python-dist }}/. ./
     shell: bash
 
-  - name: Set up Python ${{ steps.ozi-support.python-version }}
+  - name: Set up Python ${{ steps.ozi-support.outputs.python-version }}
     if: inputs.python-dist != 'prerelease'
     uses: actions/setup-python@v5
     with:
       cache: 'pip'
-      python-version: ${{ steps.ozi-support.python-version }}
+      python-version: ${{ steps.ozi-support.outputs.python-version }}
 
-  - name: Set up Python ${{ steps.ozi-support.python-version }}
+  - name: Set up Python ${{ steps.ozi-support.outputs.python-version }}
     id: maybe-prerelease
     if: inputs.python-dist == 'prerelease'
     uses: actions/setup-python@v5
     with:
       cache: 'pip'
-      python-version: ${{ steps.ozi-support.python-version }}
+      python-version: ${{ steps.ozi-support.outputs.python-version }}
       allow-prereleases: true
       check-latest: true
 
