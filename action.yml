@@ -107,6 +107,7 @@ runs:
     run: |
       mkdir sig
       mv dist/*.whl.sigstore sig
+      rm -rf dist/*.dist-info
     shell: bash
 
   - name: Move sdist signing file
