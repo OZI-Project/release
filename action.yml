@@ -45,6 +45,7 @@ runs:
       cache: 'pip'
       python-version: ${{ steps.ozi-support.python-version }}
       allow-prereleases: true
+      check-latest: true
 
   - name: Install build dependencies
     run: |
