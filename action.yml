@@ -97,7 +97,7 @@ runs:
       upload-signing-artifacts: true
 
   - uses: sigstore/gh-action-sigstore-python@v2.1.1
-    if: inputs.python-dist == 'prerelease'
+    if: inputs.python-dist == 'bugfix1'
     with:
       inputs: dist/${{ github.event.repository.name }}-${{ inputs.tag }}-*.whl
       upload-signing-artifacts: true
