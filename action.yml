@@ -36,7 +36,7 @@ runs:
     uses: actions/setup-python@v5
     with:
       cache: 'pip'
-      python-version: ${{ steps.ozi-support.outputs.python-version }}
+      python-version: ${{ fromJSON(steps.ozi-support.outputs.python-version) }}
 
   - name: Set up Python ${{ steps.ozi-support.outputs.python-version }}
     id: maybe-prerelease
@@ -44,7 +44,7 @@ runs:
     uses: actions/setup-python@v5
     with:
       cache: 'pip'
-      python-version: ${{ steps.ozi-support.outputs.python-version }}
+      python-version: ${{ fromJSON(steps.ozi-support.outputs.python-version) }}
       allow-prereleases: true
       check-latest: true
 
