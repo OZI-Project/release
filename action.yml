@@ -2,7 +2,7 @@ name: ozi-release
 description: "OZI release draft action."
 inputs:
   python-dist:
-    description: "python dist version string e.g. bugfix1, bugfix2, security, prerelease"
+    description: "python dist version string e.g. security22, security21, bugfix, prerelease"
     required: true
   github-token:
     description: "GitHub workflow-generated token"
@@ -60,7 +60,7 @@ runs:
     shell: bash
 
   - name: Configure git repository
-    if: inputs.python-dist == 'security'
+    if: inputs.python-dist == 'security2'
     run: |
         git config --global user.email "noreply@oziproject.dev"
         git config --global user.name "OZI Packaging"
@@ -68,7 +68,7 @@ runs:
     shell: bash
 
   - name: Build wheel
-    if: contains(fromJSON('["bugfix1", "bugfix2", "security"]'), inputs.python-dist)
+    if: contains(fromJSON('["bugfix", "security1", "security2"]'), inputs.python-dist)
     id: wheel
     run: |
       python -m build -w
@@ -83,21 +83,21 @@ runs:
     shell: bash
 
   - name: Build wheel and sdist
-    if: inputs.python-dist == 'bugfix1'
+    if: inputs.python-dist == 'bugfix'
     id: sdist
     run: |
       python -m build
     shell: bash
 
   - uses: sigstore/gh-action-sigstore-python@v2.1.1
-    if: inputs.python-dist == 'bugfix1'
+    if: inputs.python-dist == 'bugfix'
     with:
       inputs: dist/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz
       release-signing-artifacts: true
       upload-signing-artifacts: true
 
   - uses: sigstore/gh-action-sigstore-python@v2.1.1
-    if: inputs.python-dist == 'bugfix1'
+    if: inputs.python-dist == 'bugfix'
     with:
       inputs: dist/${{ github.event.repository.name }}-${{ inputs.tag }}-*.whl
       upload-signing-artifacts: true
@@ -127,28 +127,28 @@ runs:
       echo "hashes=$(sha256sum ./dist/* | base64 -w0)" >> $GITHUB_OUTPUT
 
   - uses: actions/upload-artifact@v4.3.0
-    if: inputs.python-dist == 'security'
+    if: inputs.python-dist == 'security2'
     with:
-      name: 'bugfix2'
+      name: 'security1'
       path: |
         !build/
         ./
 
   - uses: actions/upload-artifact@v4.3.0
-    if: inputs.python-dist == 'bugfix2'
+    if: inputs.python-dist == 'security1'
     with:
-      name: 'bugfix1'
+      name: 'bugfix'
       path: |
-        !bugfix2/
+        !security1/
         !build/
         ./
 
   - uses: actions/upload-artifact@v4.3.0
-    if: inputs.python-dist == 'bugfix1'
+    if: inputs.python-dist == 'bugfix'
     with:
       name: 'prerelease'
       path: |
-        !bugfix1/
+        !bugfix/
         !build/
         ./
 
