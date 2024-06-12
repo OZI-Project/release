@@ -64,6 +64,24 @@ runs:
         rm -rf .git/COMMIT_EDITMSG
     shell: bash
 
+  - name: Hiding README.rst symlink from SCM
+    continue-on-error: true
+    run: |
+        git update-index --skip-worktree README.rst
+    shell: bash
+
+  - name: Hiding README.md symlink from SCM
+    continue-on-error: true
+    run: |
+        git update-index --skip-worktree README.md
+    shell: bash
+
+  - name: Hiding README.txt symlink from SCM
+    continue-on-error: true
+    run: |
+        git update-index --skip-worktree README.txt
+    shell: bash
+
   - name: Build wheel
     if: contains(fromJSON('["bugfix", "security1", "security2"]'), inputs.python-dist)
     id: wheel
