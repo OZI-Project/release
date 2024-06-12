@@ -28,10 +28,6 @@ runs:
     with:
       name: ${{ inputs.python-dist }}
 
-  - name: Move artifact
-    run: cp -a ${{ inputs.python-dist }}/. ./
-    shell: bash
-
   - name: Set up Python ${{ steps.ozi-support.outputs.python-version }}
     if: inputs.python-dist != 'prerelease'
     uses: actions/setup-python@v5
