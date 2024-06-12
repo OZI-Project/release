@@ -131,6 +131,9 @@ runs:
     with:
       name: 'security1'
       path: |
+        !*-checkpoint/
+        !signing-artifacts-*/
+        !security2/
         !build/
         ./
 
