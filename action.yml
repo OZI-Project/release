@@ -25,7 +25,8 @@ runs:
     shell: bash
 
   - uses: actions/download-artifact@v4
-    name: ${{ inputs.python-dist }}
+    with:
+      name: ${{ inputs.python-dist }}
 
   - name: Move artifact
     run: cp -a ${{ inputs.python-dist }}/. ./
