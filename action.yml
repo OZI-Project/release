@@ -104,14 +104,14 @@ runs:
       python -m build
     shell: bash
 
-  - uses: sigstore/gh-action-sigstore-python@v2.1.1
+  - uses: sigstore/gh-action-sigstore-python@v3.0.0
     if: inputs.python-dist == 'bugfix'
     with:
       inputs: dist/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz
       release-signing-artifacts: true
       upload-signing-artifacts: true
 
-  - uses: sigstore/gh-action-sigstore-python@v2.1.1
+  - uses: sigstore/gh-action-sigstore-python@v3.0.0
     if: inputs.python-dist == 'bugfix'
     with:
       inputs: dist/*.whl
