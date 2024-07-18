@@ -124,7 +124,7 @@ runs:
   - name: Move sdist signing file
     if: inputs.python-dist == 'prerelease'
     run: |
-      mv dist/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz.sigstore sig/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz.sigstore.json
+      mv dist/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz.sigstore.json sig/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz.sigstore.json
     shell: bash
 
   - name: Generate hashes for provenance
