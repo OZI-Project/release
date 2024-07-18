@@ -107,14 +107,10 @@ runs:
   - uses: sigstore/gh-action-sigstore-python@v3.0.0
     if: inputs.python-dist == 'bugfix'
     with:
-      inputs: dist/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz
+      inputs: |
+        dist/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz
+        dist/*.whl
       release-signing-artifacts: true
-      upload-signing-artifacts: true
-
-  - uses: sigstore/gh-action-sigstore-python@v3.0.0
-    if: inputs.python-dist == 'bugfix'
-    with:
-      inputs: dist/*.whl
       upload-signing-artifacts: true
 
   - name: Move wheel signing files
