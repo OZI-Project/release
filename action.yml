@@ -114,6 +114,7 @@ runs:
   - uses: sigstore/gh-action-sigstore-python@v3.0.0
     if: inputs.python-dist == 'bugfix'
     with:
+      name: signing-artifacts-whl-release
       inputs: dist/*.whl
       upload-signing-artifacts: true
 
