@@ -117,14 +117,14 @@ runs:
     if: inputs.python-dist == 'prerelease'
     run: |
       mkdir sig
-      mv dist/*.whl.sigstore sig
+      mv dist/*.whl.sigstore.json sig
       rm -rf dist/*.dist-info
     shell: bash
 
   - name: Move sdist signing file
     if: inputs.python-dist == 'prerelease'
     run: |
-      mv dist/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz.sigstore sig/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz.sigstore
+      mv dist/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz.sigstore sig/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz.sigstore.json
     shell: bash
 
   - name: Generate hashes for provenance
