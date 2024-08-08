@@ -84,24 +84,29 @@ runs:
 
   - name: Build wheel
     if: contains(fromJSON('["bugfix", "security1", "security2"]'), inputs.python-dist)
+    uses: pypa/cibuildwheel@v2.20.0
+    env:
+      CIBW_BUILD_FRONTEND: build
+    with:
+      package-dir: .
+      output-dir: dist
     id: wheel
-    run: |
-      python -m build -w
-    shell: bash
 
   - name: Build prerelease wheel
     if: inputs.python-dist == 'prerelease'
     continue-on-error: true
-    id: wheel-prerelease
-    run: |
-      python -m build -w
-    shell: bash
+    uses: pypa/cibuildwheel@v2.20.0
+    env:
+      CIBW_BUILD_FRONTEND: build
+    with:
+      package-dir: .
+      output-dir: dist
 
-  - name: Build wheel and sdist
+  - name: Build sdist
     if: inputs.python-dist == 'bugfix'
     id: sdist
     run: |
-      python -m build
+      python -m build -s
     shell: bash
 
   - uses: sigstore/gh-action-sigstore-python@v3.0.0
