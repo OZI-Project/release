@@ -27,7 +27,7 @@ runs:
   - name: Get Python tag
     id: cibuildwheel-support
     run: |
-      echo "tag=$( echo 'cp${{ steps.ozi-support.outputs.python-version }}' | sed 's/.//' )" >> $GITHUB_OUTPUT
+      echo "tag=$( echo ${{ steps.ozi-support.outputs.python-version }} | sed 's/\.//' )" >> $GITHUB_OUTPUT
     shell: bash
 
   - uses: actions/download-artifact@v4
@@ -92,7 +92,7 @@ runs:
     if: contains(fromJSON('["bugfix", "security1", "security2"]'), inputs.python-dist)
     uses: pypa/cibuildwheel@v2.20.0
     env:
-      CIBW_BUILD: '${{ steps.cibuildwheel-support.outputs.tag }}*'
+      CIBW_BUILD: 'cp${{ steps.cibuildwheel-support.outputs.tag }}*'
       CIBW_BUILD_FRONTEND: build
     with:
       package-dir: .
@@ -104,7 +104,7 @@ runs:
     continue-on-error: true
     uses: pypa/cibuildwheel@v2.20.0
     env:
-      CIBW_BUILD: '${{ steps.cibuildwheel-support.outputs.tag }}*'
+      CIBW_BUILD: 'cp${{ steps.cibuildwheel-support.outputs.tag }}*'
       CIBW_BUILD_FRONTEND: build
       CIBW_PRERELEASE_PYTHONS: true
     with:
