@@ -24,6 +24,12 @@ runs:
       echo "python-version=$( curl -L https://oziproject.dev/api.json | jq -c '.spec.python.support.${{ inputs.python-dist }}' )" >> $GITHUB_OUTPUT
     shell: bash
 
+  - name: Get Python tag
+    id: cibuildwheel-support
+    run: |
+      echo "tag=$( echo 'cp${{ steps.ozi-support.outputs.python-version }}' | sed 's/.//' )" >> $GITHUB_OUTPUT
+    shell: bash
+
   - uses: actions/download-artifact@v4
     with:
       name: ${{ inputs.python-dist }}
@@ -86,7 +92,7 @@ runs:
     if: contains(fromJSON('["bugfix", "security1", "security2"]'), inputs.python-dist)
     uses: pypa/cibuildwheel@v2.20.0
     env:
-      CIBW_BUILD: ${{ steps.ozi-support.outputs.python-version }}*
+      CIBW_BUILD: '${{ steps.cibuildwheel-support.outputs.tag }}*'
       CIBW_BUILD_FRONTEND: build
     with:
       package-dir: .
@@ -98,7 +104,7 @@ runs:
     continue-on-error: true
     uses: pypa/cibuildwheel@v2.20.0
     env:
-      CIBW_BUILD: ${{ steps.ozi-support.outputs.python-version }}*
+      CIBW_BUILD: '${{ steps.cibuildwheel-support.outputs.tag }}*'
       CIBW_BUILD_FRONTEND: build
       CIBW_PRERELEASE_PYTHONS: true
     with:
