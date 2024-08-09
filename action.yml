@@ -98,6 +98,7 @@ runs:
       package-dir: .
       output-dir: dist
     id: wheel
+    continue-on-error: true
 
   - name: Build prerelease wheel
     if: inputs.python-dist == 'prerelease'
@@ -110,6 +111,13 @@ runs:
     with:
       package-dir: .
       output-dir: dist
+    id: wheel-prerelease
+
+  - name: Build pure-Python wheel
+    if: job.steps.wheel.status == failure() || job.steps.wheel-prerelease.status == failure()
+    run: |
+        python -m build --wheel
+    shell: bash
 
   - name: Build sdist
     if: inputs.python-dist == 'bugfix'
