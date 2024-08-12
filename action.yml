@@ -114,13 +114,13 @@ runs:
     id: wheel-prerelease
 
   - name: Build pure-Python wheel
-    if: ${{ job.steps.wheel.outcome == 'failure' && contains(fromJSON('["bugfix", "security1", "security2"]'), inputs.python-dist) }}
+    if: job.steps.wheel.outcome == 'failure' && contains(fromJSON('["bugfix", "security1", "security2"]'), inputs.python-dist)
     run: |
         python -m build --wheel
     shell: bash
 
   - name: Build pure-Python prerelease wheel
-    if: ${{ job.steps.wheel-prerelease.outcome == 'failure' && inputs.python-dist == 'prerelease' }}
+    if: job.steps.wheel-prerelease.outcome == 'failure' && inputs.python-dist == 'prerelease'
     continue-on-error: true
     run: |
         python -m build --wheel
