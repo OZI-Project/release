@@ -113,6 +113,7 @@ runs:
     run: |
       mkdir sig
       mv dist/*.whl.sigstore.json sig
+      mv dist/*.tar.gz.sigstore.json sig
       rm -rf dist/*.dist-info
     shell: bash
 
