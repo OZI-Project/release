@@ -54,12 +54,11 @@ runs:
   - name: Install build dependencies
     run: |
         python -m pip install --upgrade pip
-        python -m pip install --user --upgrade build
-        python -m pip install --user --upgrade meson
-        python -m pip install --user --upgrade OZI.build
-        python -m pip install --user --upgrade setuptools_scm
-        python -m pip install --user --upgrade ninja
-        python -m pip install --user --upgrade pip-tools
+        python -m pip install --user --upgrade uv
+        uv pip install --user --upgrade OZI.build[core,uv]
+        uv pip install --user --upgrade tox-gh>=1.2 tox==4.15.0
+        pipx ensurepath --force
+        pipx install meson --force
     shell: bash
 
   - name: Configure git repository
@@ -88,72 +87,17 @@ runs:
         git update-index --skip-worktree README.txt
     shell: bash
 
-  - name: Build wheel
-    if: contains(fromJSON('["bugfix", "security1", "security2"]'), inputs.python-dist)
-    uses: pypa/cibuildwheel@v2.20.0
-    env:
-      CIBW_BUILD: 'cp${{ steps.cibuildwheel-support.outputs.tag }}*'
-      CIBW_BUILD_FRONTEND: build
-    with:
-      package-dir: .
-      output-dir: dist
-    id: wheel
-    continue-on-error: true
-
-  - name: Build prerelease wheel
-    if: inputs.python-dist == 'prerelease'
-    continue-on-error: true
-    uses: pypa/cibuildwheel@v2.20.0
-    env:
-      CIBW_BUILD: 'cp${{ steps.cibuildwheel-support.outputs.tag }}*'
-      CIBW_BUILD_FRONTEND: build
-      CIBW_PRERELEASE_PYTHONS: true
-    with:
-      package-dir: .
-      output-dir: dist
-    id: wheel-prerelease
-
-  - name: Build pure-Python wheel
-    if: steps.wheel.outcome == 'failure' && contains(fromJSON('["bugfix", "security1", "security2"]'), inputs.python-dist)
+  - name: Build and sign wheel
+    if: contains(fromJSON('["prerelease", "security1", "security2"]'), inputs.python-dist)
     run: |
-        python -m build --wheel
+        tox -e invoke -- release
     shell: bash
 
-  - name: Build pure-Python prerelease wheel
-    if: steps.wheel-prerelease.outcome == 'failure' && inputs.python-dist == 'prerelease'
-    continue-on-error: true
-    run: |
-        python -m build --wheel
-    shell: bash
-
-  - name: Build sdist
+  - name: Build and sign sdist then wheel
     if: inputs.python-dist == 'bugfix'
     id: sdist
     run: |
-      python -m build -s
-    shell: bash
-
-  - uses: sigstore/gh-action-sigstore-python@v3.0.0
-    if: inputs.python-dist == 'bugfix'
-    with:
-      inputs: |
-        dist/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz
-        dist/*.whl
-      release-signing-artifacts: true
-      upload-signing-artifacts: true
-
-  - name: Move wheel signing files
-    if: inputs.python-dist == 'prerelease'
-    run: |
-      mkdir sig
-      mv dist/*.whl.sigstore.json sig
-      rm -rf dist/*.dist-info
-    shell: bash
-
-  - name: Move sdist signing file
-    if: inputs.python-dist == 'prerelease'
-    run: |
-      mv dist/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz.sigstore.json sig/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz.sigstore.json
+        tox -e invoke -- release --sdist
     shell: bash
 
   - name: Generate hashes for provenance
