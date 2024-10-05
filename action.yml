@@ -35,16 +35,6 @@ runs:
       name: ${{ inputs.python-dist }}
 
   - name: Set up Python ${{ steps.ozi-support.outputs.python-version }}
-    if: inputs.python-dist != 'prerelease'
-    uses: actions/setup-python@v5
-    with:
-      cache: 'pip'
-      python-version: ${{ fromJSON(steps.ozi-support.outputs.python-version) }}
-      check-latest: true
-
-  - name: Set up Python ${{ steps.ozi-support.outputs.python-version }}
-    id: maybe-prerelease
-    if: inputs.python-dist == 'prerelease'
     uses: actions/setup-python@v5
     with:
       cache: 'pip'
