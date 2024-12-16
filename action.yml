@@ -19,34 +19,39 @@ runs:
   steps:
 
   - name: Get OZI specification API
-    id: ozi-support
+    id: api
     run: |
-      echo "python-version=$( curl -L https://oziproject.dev/api.json | jq -c '.spec.python.support.${{ inputs.python-dist }}' )" >> $GITHUB_OUTPUT
+      api=$( curl -L https://oziproject.dev/api.json )
+      echo "python-version=$( $api | jq -c '.spec.python.support.${{ inputs.python-dist }}' )" >> $GITHUB_OUTPUT
+      echo "ozi-build=$( $api | jq -c '.spec.python.build.requires."OZI.build"' )" >> $GITHUB_OUTPUT
+      echo "tox=$( $api | jq -c '.spec.python.ci.backend.tox' )" >> $GITHUB_OUTPUT
+      echo "tox-gh=$( $api | jq -c '.spec.python.ci.backend."tox-gh"' )" >> $GITHUB_OUTPUT
     shell: bash
 
   - name: Get Python tag
     id: cibuildwheel-support
     run: |
-      echo "tag=$( echo ${{ steps.ozi-support.outputs.python-version }} | sed 's/\.//' )" >> $GITHUB_OUTPUT
+      echo "tag=$( echo ${{ steps.api.outputs.python-version }} | sed 's/\.//' )" >> $GITHUB_OUTPUT
     shell: bash
 
   - uses: actions/download-artifact@v4
     with:
       name: ${{ inputs.python-dist }}
 
-  - name: Set up Python ${{ steps.ozi-support.outputs.python-version }}
+  - name: Set up Python ${{ steps.api.outputs.python-version }}
     uses: actions/setup-python@v5
     with:
       cache: 'pip'
-      python-version: ${{ fromJSON(steps.ozi-support.outputs.python-version) }}
+      python-version: ${{ fromJSON(steps.api.outputs.python-version) }}
       allow-prereleases: true
       check-latest: true
 
   - name: Install build dependencies
     run: |
         python -m pip install --upgrade pip
-        python -m pip install --user --upgrade OZI.build[core,uv]
-        python -m pip install --user --upgrade tox-gh>=1.2 tox==4.15.0
+        python -m pip install --user ${{ steps.api.outputs.ozi-build }}
+        python -m pip install --user ${{ steps.api.outputs.tox }}
+        python -m pip install --user ${{ steps.api.outputs.tox-gh }}
         pipx ensurepath --force
         pipx install meson --force
     shell: bash
