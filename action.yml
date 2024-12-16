@@ -21,11 +21,10 @@ runs:
   - name: Get OZI specification API
     id: api
     run: |
-      api=$( curl -L https://oziproject.dev/api.json )
-      echo "python-version=$( $api | jq -c '.spec.python.support.${{ inputs.python-dist }}' )" >> $GITHUB_OUTPUT
-      echo "ozi-build=$( $api | jq -c '.spec.python.build.requires."OZI.build"' )" >> $GITHUB_OUTPUT
-      echo "tox=$( $api | jq -c '.spec.python.ci.backend.tox' )" >> $GITHUB_OUTPUT
-      echo "tox-gh=$( $api | jq -c '.spec.python.ci.backend."tox-gh"' )" >> $GITHUB_OUTPUT
+      echo "python-version=$( curl -L https://oziproject.dev/api.json | jq -c '.spec.python.support.${{ inputs.python-dist }}' )" >> $GITHUB_OUTPUT
+      echo "ozi-build=$( curl -L https://oziproject.dev/api.json | jq -c '.spec.python.build.requires."OZI.build"' )" >> $GITHUB_OUTPUT
+      echo "tox=$( curl -L https://oziproject.dev/api.json | jq -c '.spec.python.ci.backend.tox' )" >> $GITHUB_OUTPUT
+      echo "tox-gh=$( curl -L https://oziproject.dev/api.json | jq -c '.spec.python.ci.backend."tox-gh"' )" >> $GITHUB_OUTPUT
     shell: bash
 
   - name: Get Python tag
