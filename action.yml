@@ -129,6 +129,7 @@ runs:
       name: 'security1'
       path: |
         !*-checkpoint/
+        !.git/config
         !signing-artifacts-*/
         !security2/
         !build/
