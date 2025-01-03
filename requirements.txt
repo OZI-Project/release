@@ -1,0 +1,166 @@
+
+argcomplete==3.5.3 \
+    --hash=sha256:2ab2c4a215c59fd6caaff41a869480a23e8f6a5f910b266c1808037f4e375b61 \
+    --hash=sha256:c12bf50eded8aebb298c7b7da7a5ff3ee24dffd9f5281867dfe1424b58c55392
+    # via pipx
+build==1.2.2.post1 \
+    --hash=sha256:1d61c0887fa860c01971625baae8bdd338e517b836a2f70dd1f7aa3a6b2fc5b5 \
+    --hash=sha256:b36993e92ca9375a219c99e606a122ff365a760a2d4bba0caa09bd5278b608b7
+    # via pip-tools
+cachetools==5.5.0 \
+    --hash=sha256:02134e8439cdc2ffb62023ce1debca2944c3f289d66bb17ead3ab3dede74b292 \
+    --hash=sha256:2cc24fb4cbe39633fb7badd9db9ca6295d766d9c2995f245725a46715d050f2a
+    # via tox
+chardet==5.2.0 \
+    --hash=sha256:1b3b6ff479a8c414bc3fa2c0852995695c4a026dcd6d0633b2dd092ca39c1cf7 \
+    --hash=sha256:e1cf59446890a00105fe7b7912492ea04b6e6f06d4b742b2c788469e34c82970
+    # via tox
+click==8.1.8 \
+    --hash=sha256:63c132bbbed01578a06712a2d1f497bb62d9c1c0d329b7903a866228027263b2 \
+    --hash=sha256:ed53c9d8990d83c2a27deae68e4ee337473f6330c040a31d4225c9574d16096a
+    # via
+    #   pip-tools
+    #   userpath
+colorama==0.4.6 \
+    --hash=sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44 \
+    --hash=sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6
+    # via tox
+distlib==0.3.9 \
+    --hash=sha256:47f8c22fd27c27e25a65601af709b38e4f0a45ea4fc2e710f65755fa8caaaf87 \
+    --hash=sha256:a60f20dea646b8a33f3e7772f74dc0b2d0772d2837ee1342a00645c81edf9403
+    # via virtualenv
+filelock==3.16.1 \
+    --hash=sha256:2082e5703d51fbf98ea75855d9d5527e33d8ff23099bec374a134febee6946b0 \
+    --hash=sha256:c249fbfcd5db47e5e2d6d62198e565475ee65e4831e2561c8e313fa7eb961435
+    # via
+    #   tox
+    #   virtualenv
+invoke==2.2.0 \
+    --hash=sha256:6ea924cc53d4f78e3d98bc436b08069a03077e6f85ad1ddaa8a116d7dad15820 \
+    --hash=sha256:ee6cbb101af1a859c7fe84f2a264c059020b0cb7fe3535f9424300ab568f6bd5
+    # via ozi-build
+meson[ninja]==1.6.1 \
+    --hash=sha256:1eca49eb6c26d58bbee67fd3337d8ef557c0804e30a6d16bfdf269db997464de \
+    --hash=sha256:3f41f6b03df56bb76836cc33c94e1a404c3584d48b3259540794a60a21fad1f9
+    # via ozi-build
+ninja==1.11.1.3 \
+    --hash=sha256:04d48d14ea7ba11951c156599ab526bdda575450797ff57c6fdf99b2554d09c7 \
+    --hash=sha256:114ed5c61c8474df6a69ab89097a20749b769e2c219a452cb2fadc49b0d581b0 \
+    --hash=sha256:17978ad611d8ead578d83637f5ae80c2261b033db0b493a7ce94f88623f29e1b \
+    --hash=sha256:1ad2112c2b0159ed7c4ae3731595191b1546ba62316fc40808edecd0306fefa3 \
+    --hash=sha256:2883ea46b3c5079074f56820f9989c6261fcc6fd873d914ee49010ecf283c3b2 \
+    --hash=sha256:28aea3c1c280cba95b8608d50797169f3a34280e3e9a6379b6e340f0c9eaeeb0 \
+    --hash=sha256:2b4879ea3f1169f3d855182c57dcc84d1b5048628c8b7be0d702b81882a37237 \
+    --hash=sha256:53409151da081f3c198bb0bfc220a7f4e821e022c5b7d29719adda892ddb31bb \
+    --hash=sha256:56ada5d33b8741d298836644042faddebc83ee669782d661e21563034beb5aba \
+    --hash=sha256:7fa2247fce98f683bc712562d82b22b8a0a5c000738a13147ca2d1b68c122298 \
+    --hash=sha256:8c4bdb9fd2d0c06501ae15abfd23407660e95659e384acd36e013b6dd7d8a8e4 \
+    --hash=sha256:a27e78ca71316c8654965ee94b286a98c83877bfebe2607db96897bbfe458af0 \
+    --hash=sha256:a38c6c6c8032bed68b70c3b065d944c35e9f903342875d3a3218c1607987077c \
+    --hash=sha256:a4a3b71490557e18c010cbb26bd1ea9a0c32ee67e8f105e9731515b6e0af792e \
+    --hash=sha256:b6966f83064a88a51693073eea3decd47e08c3965241e09578ef7aa3a7738329 \
+    --hash=sha256:bc3ebc8b2e47716149f3541742b5cd8e0b08f51013b825c05baca3e34854370d \
+    --hash=sha256:edfa0d2e9d7ead1635b03e40a32ad56cc8f56798b6e2e9848d8300b174897076
+    # via meson
+ozi-build[ci,core,uv]==1.10.1 \
+    --hash=sha256:c6f8119b00a6678dd3cca9a7ebdd18ee7e44e3a0d3b6c7fb11c6390552713cc0 \
+    --hash=sha256:d14598e49821316fc96e8cfb6f46a9239ffd29391a18ede7837b2b740f0ab19b
+    # via -r requirements.in
+packaging==24.2 \
+    --hash=sha256:09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759 \
+    --hash=sha256:c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f
+    # via
+    #   build
+    #   ozi-build
+    #   pipx
+    #   pyproject-api
+    #   setuptools-scm
+    #   tox
+pathvalidate==3.2.2 \
+    --hash=sha256:088dd9cae734389b5949c6f42a159dcd8a2d66a2358dfce8e1252712ada66191 \
+    --hash=sha256:ff7383cafc499fa574b46c1c00cf2965a53aedc92dd2d62729993cdba308319b
+    # via ozi-build
+pip-tools==7.4.1 \
+    --hash=sha256:4c690e5fbae2f21e87843e89c26191f0d9454f362d8acdbd695716493ec8b3a9 \
+    --hash=sha256:864826f5073864450e24dbeeb85ce3920cdfb09848a3d69ebf537b521f14bcc9
+    # via ozi-build
+pipx==1.7.1 \
+    --hash=sha256:3933c43bb344e649cb28e10d357e0967ce8572f1c19caf90cf39ae95c2a0afaf \
+    --hash=sha256:762de134e16a462be92645166d225ecef446afaef534917f5f70008d63584360
+    # via ozi-build
+platformdirs==4.3.6 \
+    --hash=sha256:357fb2acbc885b0419afd3ce3ed34564c13c9b95c89360cd9563f73aa5e2b907 \
+    --hash=sha256:73e575e1408ab8103900836b97580d5307456908a03e92031bab39e4554cc3fb
+    # via
+    #   pipx
+    #   tox
+    #   virtualenv
+pluggy==1.5.0 \
+    --hash=sha256:2cffa88e94fdc978c4c574f15f9e59b7f4201d439195c3715ca9e2486f1d0cf1 \
+    --hash=sha256:44e1ad92c8ca002de6377e165f3e0f1be63266ab4d554740532335b9d75ea669
+    # via tox
+pyproject-api==1.8.0 \
+    --hash=sha256:3d7d347a047afe796fd5d1885b1e391ba29be7169bd2f102fcd378f04273d228 \
+    --hash=sha256:77b8049f2feb5d33eefcc21b57f1e279636277a8ac8ad6b5871037b243778496
+    # via tox
+pyproject-hooks==1.2.0 \
+    --hash=sha256:1e859bd5c40fae9448642dd871adf459e5e2084186e8d2c2a79a824c970da1f8 \
+    --hash=sha256:9e5c6bfa8dcc30091c74b0cf803c81fdd29d94f01992a7707bc97babb1141913
+    # via
+    #   build
+    #   pip-tools
+setuptools-scm[toml]==8.1.0 \
+    --hash=sha256:42dea1b65771cba93b7a515d65a65d8246e560768a66b9106a592c8e7f26c8a7 \
+    --hash=sha256:897a3226a6fd4a6eb2f068745e49733261a21f70b1bb28fce0339feb978d9af3
+    # via
+    #   ozi-build
+    #   setuptools-scm
+tox==4.23.2 \
+    --hash=sha256:452bc32bb031f2282881a2118923176445bac783ab97c874b8770ab4c3b76c38 \
+    --hash=sha256:86075e00e555df6e82e74cfc333917f91ecb47ffbc868dcafbd2672e332f4a2c
+    # via
+    #   ozi-build
+    #   tox-gh
+tox-gh==1.4.4 \
+    --hash=sha256:4ea585f66585b90f5826b1677cfc9453747792a0f9ff83d468603bc17556e07b \
+    --hash=sha256:b962e0f8c4619e98d11c2a135939876691e148b843b7dac4cff7de1dc4f7c215
+    # via ozi-build
+userpath==1.9.2 \
+    --hash=sha256:2cbf01a23d655a1ff8fc166dfb78da1b641d1ceabf0fe5f970767d380b14e89d \
+    --hash=sha256:6c52288dab069257cc831846d15d48133522455d4677ee69a9781f11dbefd815
+    # via pipx
+uv==0.5.14 \
+    --hash=sha256:02fa1c9223ccb90e686a02c5c37a3357cac00165263b41f5f53119f815335157 \
+    --hash=sha256:03c0fe3f1257fb73650230e13e1fd928422b708276539e816242953681561bd7 \
+    --hash=sha256:12f041458a9d00c84a29eab79d3b5bc53dfd50947787b7c0f628eda7678621a7 \
+    --hash=sha256:2a6ecf961d96896f32fd6c198baa25d99f20ed12d6aeb5e514aa5874ae5000c3 \
+    --hash=sha256:2dd71f94881d2d402896ab4e94f47dd5e6f4f097c6ae4115345030e263910911 \
+    --hash=sha256:42d1e3849d3594b2d3a93f335a776597db8a1d3dcee43dbd4ec49f1ad1f63093 \
+    --hash=sha256:484e7921268057011264352696877e1e0c4fd1e0dab5057da73623c0a9d21067 \
+    --hash=sha256:54672772289c01811cf1efca4425fa2ae70bfaff020ec197288b7f6c969357e3 \
+    --hash=sha256:5fe0748a1c045dc1e95e77a8181ce9bfb848ebbeb175e277ad256a7befbbb61d \
+    --hash=sha256:786e16620d679cfa98cea1dd126405a82b63ee43e63994bc208abd0ab68cc529 \
+    --hash=sha256:90731cdc9ecb5fa7366696e07b81adf211d54417757f240ddd600f8b7b0107c7 \
+    --hash=sha256:93a187ed9da2df5788b755016c77559486c29cf3c87b9ca46822946e3c0734a4 \
+    --hash=sha256:a436e948f5ea149b9cd0eb30f923eca190b2d05bb48d9543d4373e1132da1b91 \
+    --hash=sha256:b4aa2131c1fc6db62311b26e768987aa582fe6c9256951b5fc9f6f56fb3e2cb9 \
+    --hash=sha256:d78a1289d51a9a605703540712963703e58c43380f9645738f6fea0ab4657788 \
+    --hash=sha256:f83af784fc842535c382aa58870a8c61aba0dfaa4bf4f2fdf5df03ec934060e2 \
+    --hash=sha256:ff362cb0ed592af69433680d9597f34e62c22fe7658a894212e80e24f7c506b6
+    # via ozi-build
+virtualenv==20.28.1 \
+    --hash=sha256:412773c85d4dab0409b83ec36f7a6499e72eaf08c80e81e9576bca61831c71cb \
+    --hash=sha256:5d34ab240fdb5d21549b76f9e8ff3af28252f5499fb6d6f031adac4e5a8c5329
+    # via tox
+wheel==0.45.1 \
+    --hash=sha256:661e1abd9198507b1409a20c02106d9670b2576e916d58f520316666abca6729 \
+    --hash=sha256:708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248
+    # via
+    #   ozi-build
+    #   pip-tools
+
+# WARNING: The following packages were not pinned, but pip requires them to be
+# pinned when the requirements file includes hashes and the requirement is not
+# satisfied by a package already installed. Consider using the --allow-unsafe flag.
+# pip
+# setuptools
