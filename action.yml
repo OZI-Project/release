@@ -48,9 +48,7 @@ runs:
   - name: Install build dependencies
     run: |
         python -m pip install --upgrade pip
-        python -m pip install --user ${{ steps.api.outputs.ozi-build }}
-        python -m pip install --user ${{ steps.api.outputs.tox }}
-        python -m pip install --user ${{ steps.api.outputs.tox-gh }}
+        python -m pip install --user -r ${GITHUB_ACTION_PATH}/requirements.txt
         pipx ensurepath --force
         pipx install meson --force
     shell: bash
