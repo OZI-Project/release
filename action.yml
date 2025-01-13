@@ -79,6 +79,12 @@ runs:
         git update-index --skip-worktree README.txt
     shell: bash
 
+  - name: Hiding subprojects/ozi
+    continue-on-error: true
+    run: |
+        git update-index --skip-worktree subprojects/ozi
+    shell: bash
+
   - name: git diff
     run: git diff
     shell: bash
@@ -91,12 +97,6 @@ runs:
 
   - name: git diff
     run: git diff
-    shell: bash
-
-  - name: Hiding subprojects/ozi
-    continue-on-error: true
-    run: |
-        git update-index --skip-worktree subprojects/ozi
     shell: bash
 
   - name: Build and sign sdist then wheel
