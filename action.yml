@@ -79,10 +79,18 @@ runs:
         git update-index --skip-worktree README.txt
     shell: bash
 
+  - name: git diff
+    run: git diff
+    shell: bash
+
   - name: Build and sign wheel
     if: contains(fromJSON('["prerelease", "security1", "security2"]'), inputs.python-dist)
     run: |
         tox -e invoke -- release
+    shell: bash
+
+  - name: git diff
+    run: git diff
     shell: bash
 
   - name: Build and sign sdist then wheel
