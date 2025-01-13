@@ -93,6 +93,12 @@ runs:
     run: git diff
     shell: bash
 
+  - name: Hiding subprojects/ozi
+    continue-on-error: true
+    run: |
+        git update-index --skip-worktree subprojects/ozi
+    shell: bash
+
   - name: Build and sign sdist then wheel
     if: inputs.python-dist == 'bugfix'
     id: sdist
