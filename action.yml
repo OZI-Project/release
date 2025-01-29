@@ -2,7 +2,7 @@ name: ozi-release
 description: "OZI release draft action."
 inputs:
   python-dist:
-    description: "python dist version string e.g. security22, security21, bugfix, prerelease"
+    description: "python dist version string e.g. security1, security2, bugfix, prerelease"
     required: true
   github-token:
     description: "GitHub workflow-generated token"
@@ -33,12 +33,12 @@ runs:
       echo "tag=$( echo ${{ steps.api.outputs.python-version }} | sed 's/\.//' )" >> $GITHUB_OUTPUT
     shell: bash
 
-  - uses: actions/download-artifact@v4
+  - uses: actions/download-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
     with:
       name: ${{ inputs.python-dist }}
 
   - name: Set up Python ${{ steps.api.outputs.python-version }}
-    uses: actions/setup-python@v5
+    uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38
     with:
       cache: 'pip'
       python-version: ${{ fromJSON(steps.api.outputs.python-version) }}
@@ -106,7 +106,7 @@ runs:
         tox -e invoke -- release --sdist
     shell: bash
 
-  - uses: sigstore/gh-action-sigstore-python@v3.0.0
+  - uses: sigstore/gh-action-sigstore-python@f514d46b907ebcd5bedc05145c03b69c1edd8b46
     if: inputs.python-dist == 'bugfix'
     with:
       inputs: |
@@ -134,7 +134,7 @@ runs:
       # sha256sum artifact1 artifact2 ... | base64 -w0
       echo "hashes=$(sha256sum ./dist/* | base64 -w0)" >> $GITHUB_OUTPUT
 
-  - uses: actions/upload-artifact@v4.6.0
+  - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
     if: inputs.python-dist == 'security2'
     with:
       include-hidden-files: true
@@ -147,7 +147,7 @@ runs:
         !build/
         ./
 
-  - uses: actions/upload-artifact@v4.6.0
+  - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
     if: inputs.python-dist == 'security1'
     with:
       include-hidden-files: true
@@ -157,7 +157,7 @@ runs:
         !build/
         ./
 
-  - uses: actions/upload-artifact@v4.6.0
+  - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
     if: inputs.python-dist == 'bugfix'
     with:
       include-hidden-files: true
@@ -167,7 +167,7 @@ runs:
         !build/
         ./
 
-  - uses: actions/upload-artifact@v4.6.0
+  - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
     if: inputs.python-dist == 'prerelease'
     with:
       include-hidden-files: true
