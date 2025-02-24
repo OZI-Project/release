@@ -134,7 +134,7 @@ runs:
       # sha256sum artifact1 artifact2 ... | base64 -w0
       echo "hashes=$(sha256sum ./dist/* | base64 -w0)" >> $GITHUB_OUTPUT
 
-  - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
+  - uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1
     if: inputs.python-dist == 'security2'
     with:
       include-hidden-files: true
@@ -147,7 +147,7 @@ runs:
         !build/
         ./
 
-  - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
+  - uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1
     if: inputs.python-dist == 'security1'
     with:
       include-hidden-files: true
@@ -157,7 +157,7 @@ runs:
         !build/
         ./
 
-  - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
+  - uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1
     if: inputs.python-dist == 'bugfix'
     with:
       include-hidden-files: true
@@ -167,7 +167,7 @@ runs:
         !build/
         ./
 
-  - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
+  - uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1
     if: inputs.python-dist == 'prerelease'
     with:
       include-hidden-files: true
