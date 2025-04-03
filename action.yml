@@ -110,7 +110,7 @@ runs:
     if: inputs.python-dist == 'bugfix'
     with:
       inputs: |
-        dist/${{ github.event.repository.name }}-${{ inputs.tag }}.tar.gz
+        dist/*.tar.gz
         dist/*.whl
       release-signing-artifacts: true
       upload-signing-artifacts: true
