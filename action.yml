@@ -7,9 +7,9 @@ inputs:
   github-token:
     description: "GitHub workflow-generated token"
     required: true
-  tag:
-    description: "release tag name"
-    required: true
+  freethreaded:
+    description: "enable freethreaded python builds when applicable (Python >= 3.13)"
+    default: false
 outputs:
   hashes:
     description: "release file hashes for provenance"
@@ -18,19 +18,10 @@ runs:
   using: "composite"
   steps:
 
-  - name: Get OZI specification API
+  - name: Get OZI spec API python-version
     id: api
     run: |
       echo "python-version=$( curl -L https://oziproject.dev/api.json | jq -c '.spec.python.support.${{ inputs.python-dist }}' )" >> $GITHUB_OUTPUT
-      echo "ozi-build=$( curl -L https://oziproject.dev/api.json | jq -c '.spec.python.build.requires."OZI.build"' )" >> $GITHUB_OUTPUT
-      echo "tox=$( curl -L https://oziproject.dev/api.json | jq -c '.spec.python.ci.backend.tox' )" >> $GITHUB_OUTPUT
-      echo "tox-gh=$( curl -L https://oziproject.dev/api.json | jq -c '.spec.python.ci.backend."tox-gh"' )" >> $GITHUB_OUTPUT
-    shell: bash
-
-  - name: Get Python tag
-    id: cibuildwheel-support
-    run: |
-      echo "tag=$( echo ${{ steps.api.outputs.python-version }} | sed 's/\.//' )" >> $GITHUB_OUTPUT
     shell: bash
 
   - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e
@@ -38,6 +29,17 @@ runs:
       name: ${{ inputs.python-dist }}
 
   - name: Set up Python ${{ steps.api.outputs.python-version }}
+    if: ${{ fromJSON(steps.api.outputs.python-version) >= 3.13 }}
+    uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55
+    with:
+      cache: 'pip'
+      python-version: ${{ fromJSON(steps.api.outputs.python-version) }}
+      allow-prereleases: true
+      check-latest: true
+      freethreaded: ${{ fromJSON(inputs.freethreaded) }}
+
+  - name: Set up Python ${{ steps.api.outputs.python-version }}
+    if: ${{ fromJSON(steps.api.outputs.python-version) < 3.13 }}
     uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55
     with:
       cache: 'pip'
@@ -61,7 +63,7 @@ runs:
         rm -rf .git/COMMIT_EDITMSG
     shell: bash
 
-  - name: Hiding README.rst symlink from SCM
+  - name: Hide README.rst symlink from SCM
     continue-on-error: true
     run: |
         git update-index --skip-worktree README.rst
@@ -73,13 +75,13 @@ runs:
         git update-index --skip-worktree README.md
     shell: bash
 
-  - name: Hiding README.txt symlink from SCM
+  - name: Hide README.txt symlink from SCM
     continue-on-error: true
     run: |
         git update-index --skip-worktree README.txt
     shell: bash
 
-  - name: Hiding subprojects/ozi
+  - name: Hide subprojects/ozi symlink from SCM
     continue-on-error: true
     run: |
         git update-index --skip-worktree subprojects/ozi
