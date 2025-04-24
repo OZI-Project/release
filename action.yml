@@ -29,7 +29,6 @@ runs:
       name: ${{ inputs.python-dist }}
 
   - name: Set up Python ${{ steps.api.outputs.python-version }}
-    if: ${{ fromJSON(steps.api.outputs.python-version) >= 3.13 }}
     uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55
     with:
       cache: 'pip'
@@ -37,15 +36,6 @@ runs:
       allow-prereleases: true
       check-latest: true
       freethreaded: ${{ fromJSON(inputs.freethreaded) }}
-
-  - name: Set up Python ${{ steps.api.outputs.python-version }}
-    if: ${{ fromJSON(steps.api.outputs.python-version) < 3.13 }}
-    uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55
-    with:
-      cache: 'pip'
-      python-version: ${{ fromJSON(steps.api.outputs.python-version) }}
-      allow-prereleases: true
-      check-latest: true
 
   - name: Install build dependencies
     run: |
