@@ -82,7 +82,14 @@ runs:
     shell: bash
 
   - name: Build and sign wheel
-    if: contains(fromJSON('["prerelease", "security1", "security2"]'), inputs.python-dist)
+    if: contains(fromJSON('["security1", "security2"]'), inputs.python-dist)
+    run: |
+        tox -e invoke -- release
+    shell: bash
+
+  - name: Build and sign prerelease wheel if possible
+    if: inputs.python-dist == 'prerelease'
+    continue-on-error: true
     run: |
         tox -e invoke -- release
     shell: bash
