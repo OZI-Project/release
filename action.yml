@@ -23,7 +23,7 @@ runs:
     env:
       PY_DIST: ${{ inputs.python-dist }}
     run: |
-      echo "python-version=$( curl -L https://oziproject.dev/api.json | jq -c -r '.spec.python.support.$PY_DIST' )" >> $GITHUB_OUTPUT
+      echo "python-version=$( curl -L https://oziproject.dev/api.json | jq --arg V "$PY_DIST" -c -r '.spec.python.support[$V]' )" >> $GITHUB_OUTPUT
     shell: bash
 
   - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
