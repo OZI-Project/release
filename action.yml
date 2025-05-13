@@ -87,6 +87,10 @@ runs:
     run: git diff
     shell: bash
 
+  - name: Setup tox invoke environment
+    run: tox -e invoke -- --list
+    shell: bash
+
   - name: Build and sign wheel
     if: contains(fromJSON('["security1", "security2"]'), inputs.python-dist)
     uses: OZI-Project/secure-release@1.0.9
