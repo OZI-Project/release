@@ -10,6 +10,10 @@ inputs:
   freethreaded:
     description: "enable freethreaded python builds when applicable (Python >= 3.13)"
     default: false
+  wheel-sign-token:
+    description: "Token to sign wheel RECORD.jws with."
+    required: true
+    default: ""
 outputs:
   hashes:
     description: "release file hashes for provenance"
@@ -85,16 +89,16 @@ runs:
 
   - name: Build and sign wheel
     if: contains(fromJSON('["security1", "security2"]'), inputs.python-dist)
-    run: |
-        tox -e invoke -- release
-    shell: bash
+    uses: OZI-Project/secure-release@1.0.0
+    with:
+      wheel-sign-token: ${{ inputs.wheel-sign-token }}
 
   - name: Build and sign prerelease wheel if possible
     if: inputs.python-dist == 'prerelease'
     continue-on-error: true
-    run: |
-        tox -e invoke -- release
-    shell: bash
+    uses: OZI-Project/secure-release@1.0.0
+    with:
+      wheel-sign-token: ${{ inputs.wheel-sign-token }}
 
   - name: git diff
     run: git diff
@@ -103,9 +107,10 @@ runs:
   - name: Build and sign sdist then wheel
     if: inputs.python-dist == 'bugfix'
     id: sdist
-    run: |
-        tox -e invoke -- release --sdist
-    shell: bash
+    uses: OZI-Project/secure-release@1.0.0
+    with:
+      sdist: true
+      wheel-sign-token: ${{ inputs.wheel-sign-token }}
 
   - uses: sigstore/gh-action-sigstore-python@f514d46b907ebcd5bedc05145c03b69c1edd8b46
     if: inputs.python-dist == 'bugfix'
