@@ -14,6 +14,8 @@ inputs:
     description: "Token to sign wheel RECORD.jws with."
     required: true
     default: ""
+  ozi-internal:
+    default: false
 outputs:
   hashes:
     description: "release file hashes for provenance"
@@ -103,6 +105,7 @@ runs:
     uses: OZI-Project/secure-release@1.0.9
     with:
       wheel-sign-token: ${{ inputs.wheel-sign-token }}
+      ozi-internal: ${{ inputs.ozi-internal }}
 
   - name: Build and sign prerelease wheel if possible
     if: inputs.python-dist == 'prerelease'
@@ -110,6 +113,7 @@ runs:
     uses: OZI-Project/secure-release@1.0.9
     with:
       wheel-sign-token: ${{ inputs.wheel-sign-token }}
+      ozi-internal: ${{ inputs.ozi-internal }}
 
   - name: git diff
     run: git diff
@@ -122,6 +126,7 @@ runs:
     with:
       sdist: true
       wheel-sign-token: ${{ inputs.wheel-sign-token }}
+      ozi-internal: ${{ inputs.ozi-internal }}
 
   - uses: sigstore/gh-action-sigstore-python@f514d46b907ebcd5bedc05145c03b69c1edd8b46
     if: inputs.python-dist == 'bugfix'
