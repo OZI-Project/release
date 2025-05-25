@@ -48,6 +48,12 @@ runs:
   - name: Install build dependencies
     run: |
         python -m pip install --upgrade pip
+        python -m pip install --upgrade pipx
+    shell: bash
+
+  - name: run pipx ensurepath
+    continue-on-error: true
+    run: pipx ensurepath
     shell: bash
 
   - name: Configure git repository
