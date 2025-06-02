@@ -202,3 +202,12 @@ runs:
         !prerelease/
         !build/
         ./
+
+  - id: tag
+    if: cancelled() || failure()
+    run: echo "digest=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+    shell: bash
+
+  - name: Cleanup failed release and tag
+    if: cancelled() || failure()
+    run: gh release delete ${{ steps.tag.outputs.digest }} -y --cleanup-tag
