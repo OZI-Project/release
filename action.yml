@@ -211,3 +211,4 @@ runs:
   - name: Cleanup failed release and tag
     if: cancelled() || failure()
     run: gh release delete ${{ steps.tag.outputs.digest }} -y --cleanup-tag
+    shell: bash
