@@ -6,7 +6,8 @@ inputs:
     required: true
   github-token:
     description: "GitHub workflow-generated token"
-    required: true
+    required: false
+    default: ${{ github.token }}
   freethreaded:
     description: "enable freethreaded python builds when applicable (Python >= 3.13)"
     default: false
