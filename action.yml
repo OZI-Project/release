@@ -157,7 +157,7 @@ runs:
       ozi-internal: ${{ inputs.ozi-internal }}
 
   - uses: sigstore/gh-action-sigstore-python@f514d46b907ebcd5bedc05145c03b69c1edd8b46
-    if: strategy.job-index == strategy.job-total && inputs.run-sigstore == 'true'
+    if: strategy.job-index == fromJSON(steps.final-job-index.outputs.value) && inputs.run-sigstore == 'true'
     with:
       inputs: |
         dist/*.tar.gz
