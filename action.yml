@@ -1,5 +1,8 @@
-name: ozi-release
+name: OZI Release
 description: "OZI release draft action."
+branding:
+  icon: 'package'
+  color: 'orange'
 inputs:
   python-dist:
     description: "python dist version string e.g. security1, security2, bugfix, prerelease"
@@ -19,7 +22,7 @@ inputs:
     default: false
 outputs:
   hashes:
-    description: "release file hashes for provenance"
+    description: "release file hashes in base64 for provenance"
     value: ${{ steps.hash.outputs.hashes }}
 runs:
   using: "composite"
