@@ -18,6 +18,8 @@ inputs:
     description: "Token to sign wheel RECORD.jws with."
     required: true
     default: ""
+  run-sigstore:
+    default: false
   ozi-internal:
     default: false
 outputs:
@@ -155,7 +157,7 @@ runs:
       ozi-internal: ${{ inputs.ozi-internal }}
 
   - uses: sigstore/gh-action-sigstore-python@f514d46b907ebcd5bedc05145c03b69c1edd8b46
-    if: strategy.job-index == strategy.job-total
+    if: strategy.job-index == strategy.job-total && inputs.run-sigstore == 'true'
     with:
       inputs: |
         dist/*.tar.gz
@@ -191,6 +193,7 @@ runs:
         !.git/config
         !signing-artifacts-*/
         !security2/
+        !artifact/
         !build/
         ./
 
