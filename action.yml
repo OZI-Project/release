@@ -27,10 +27,16 @@ outputs:
 runs:
   using: "composite"
   steps:
-  - id: final-job
+  - id: final-job-index
     env: 
       JOB_TOTAL: ${{ strategy.job-total }}
-    run: echo "value=$JOB_TOTAL" >> GITHUB_OUTPUT
+    run: echo "value=$(($JOB_TOTAL-1))" >> GITHUB_OUTPUT
+    shell: bash
+
+  - id: penultimate-job-index
+    env: 
+      JOB_TOTAL: ${{ strategy.job-total }}
+    run: echo "value=$(($JOB_TOTAL-2))" >> GITHUB_OUTPUT
     shell: bash
 
   - name: Get OZI spec API python-version
@@ -118,7 +124,7 @@ runs:
     shell: bash
 
   - name: Build and sign wheel
-    if: ${{ strategy.job-index > 0 && strategy.job-index != steps.final-job-index.outputs.value }}
+    if: ${{ strategy.job-index != fromJSON(steps.penultimate-job-index.outputs.value) && strategy.job-index != fromJSON(steps.final-job-index.outputs.value) }}
     uses: OZI-Project/secure-release@1.1.1
     with:
       wheel-sign-token: ${{ inputs.wheel-sign-token }}
