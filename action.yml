@@ -216,3 +216,5 @@ runs:
     if: cancelled() || failure()
     run: gh release delete ${{ steps.tag.outputs.digest }} -y --cleanup-tag
     shell: bash
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
