@@ -70,7 +70,7 @@ runs:
 
   - name: Install build dependencies
     run: |
-        python -m pip install --upgrade pip
+        python -m pip install pip==24.3.1
         python -m pip install --upgrade pipx
         python -m pip install --upgrade tox
         python -m pip install --upgrade invoke
@@ -156,7 +156,7 @@ runs:
       wheel-sign-token: ${{ inputs.wheel-sign-token }}
       ozi-internal: ${{ inputs.ozi-internal }}
 
-  - uses: sigstore/gh-action-sigstore-python@f514d46b907ebcd5bedc05145c03b69c1edd8b46
+  - uses: sigstore/gh-action-sigstore-python@f7ad0af51a5648d09a20d00370f0a91c3bdf8f84
     if: strategy.job-index == fromJSON(steps.final-job-index.outputs.value) && inputs.run-sigstore == 'true'
     with:
       inputs: |
@@ -213,5 +213,8 @@ runs:
 
   - name: Cleanup failed release and tag
     if: cancelled() || failure()
-    run: gh release delete ${{ steps.tag.outputs.digest }} -y --cleanup-tag
+    run: gh release delete "$TAG_DIGEST" -y --cleanup-tag
     shell: bash
+    env:
+      TAG_DIGEST: ${{ steps.tag.outputs.digest }}
+      GITHUB_TOKEN: ${{ github.token }}
