@@ -111,7 +111,7 @@ runs:
 
   - name: Build and sign wheel
     if: contains(fromJSON('["security1", "security2"]'), inputs.python-dist)
-    uses: OZI-Project/secure-release@904f2d5a8938fd450cc8e51c15a0f7bb4c0cd23c
+    uses: OZI-Project/secure-release@7d71c09fb3e35c1095eac0625841ea3c58f6db19
     with:
       wheel-sign-token: ${{ inputs.wheel-sign-token }}
       ozi-internal: ${{ inputs.ozi-internal }}
@@ -120,7 +120,7 @@ runs:
   - name: Build and sign prerelease wheel if possible
     if: inputs.python-dist == 'prerelease'
     continue-on-error: true
-    uses: OZI-Project/secure-release@904f2d5a8938fd450cc8e51c15a0f7bb4c0cd23c
+    uses: OZI-Project/secure-release@7d71c09fb3e35c1095eac0625841ea3c58f6db19
     with:
       wheel-sign-token: ${{ inputs.wheel-sign-token }}
       ozi-internal: ${{ inputs.ozi-internal }}
@@ -133,7 +133,7 @@ runs:
   - name: Build and sign sdist then wheel
     if: inputs.python-dist == 'bugfix'
     id: sdist
-    uses: OZI-Project/secure-release@904f2d5a8938fd450cc8e51c15a0f7bb4c0cd23c
+    uses: OZI-Project/secure-release@7d71c09fb3e35c1095eac0625841ea3c58f6db19
     with:
       sdist: true
       wheel-sign-token: ${{ inputs.wheel-sign-token }}
