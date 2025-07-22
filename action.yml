@@ -122,13 +122,13 @@ runs:
     shell: bash
 
   - name: Setup tox invoke environment
-    if: strategy.job-index == fromJSON(steps.final-job-index.outputs.value)
+    if: ${{ strategy.job-index == fromJSON(steps.final-job-index.outputs.value) }}
     run: tox -e invoke -- --list
     continue-on-error: true
     shell: bash
 
   - name: Setup tox invoke environment
-    if: strategy.job-index != fromJSON(steps.final-job-index.outputs.value)
+    if: ${{ strategy.job-index != fromJSON(steps.final-job-index.outputs.value) }}
     run: tox -e invoke -- --list
     shell: bash
 
@@ -140,7 +140,7 @@ runs:
       ozi-internal: ${{ inputs.ozi-internal }}
 
   - name: Build and sign prerelease wheel if possible
-    if: strategy.job-index == fromJSON(steps.final-job-index.outputs.value)
+    if: ${{ strategy.job-index == fromJSON(steps.final-job-index.outputs.value) }}
     continue-on-error: true
     uses: OZI-Project/secure-release@1.1.1
     with:
@@ -152,7 +152,7 @@ runs:
     shell: bash
 
   - name: Build and sign sdist then wheel
-    if: strategy.job-index == fromJSON(steps.penultimate-job-index.outputs.value)
+    if: ${{ strategy.job-index == fromJSON(steps.penultimate-job-index.outputs.value) }}
     id: sdist
     uses: OZI-Project/secure-release@1.1.1
     with:
@@ -161,7 +161,7 @@ runs:
       ozi-internal: ${{ inputs.ozi-internal }}
 
   - uses: sigstore/gh-action-sigstore-python@f7ad0af51a5648d09a20d00370f0a91c3bdf8f84
-    if: strategy.job-index == fromJSON(steps.penultimate-job-index.outputs.value) && inputs.run-sigstore == 'true'
+    if: ${{ strategy.job-index == fromJSON(steps.penultimate-job-index.outputs.value) && inputs.run-sigstore == 'true' }}
     with:
       inputs: |
         dist/*.tar.gz
@@ -170,7 +170,7 @@ runs:
       upload-signing-artifacts: true
 
   - name: Move wheel signing files
-    if: strategy.job-index == fromJSON(steps.final-job-index.outputs.value)
+    if: ${{ strategy.job-index == fromJSON(steps.final-job-index.outputs.value) }}
     run: |
       mkdir sig
       mv dist/*.whl.sigstore.json sig
@@ -181,7 +181,7 @@ runs:
   - name: Generate hashes for provenance
     shell: bash
     id: hash
-    if: strategy.job-index == fromJSON(steps.final-job-index.outputs.value)
+    if: ${{ strategy.job-index == fromJSON(steps.final-job-index.outputs.value) }}
     run: |
       # sha256sum generates sha256 hash for all artifacts.
       # base64 -w0 encodes to base64 and outputs on a single line.
