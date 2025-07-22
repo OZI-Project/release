@@ -134,7 +134,7 @@ runs:
 
   - name: Build and sign wheel
     if: ${{ strategy.job-index != steps.penultimate-job-index.outputs.value && strategy.job-index != steps.final-job-index.outputs.value }}
-    uses: OZI-Project/secure-release@1.1.1
+    uses: OZI-Project/secure-release@1.2.0
     with:
       wheel-sign-token: ${{ inputs.wheel-sign-token }}
       ozi-internal: ${{ inputs.ozi-internal }}
@@ -142,7 +142,7 @@ runs:
   - name: Build and sign prerelease wheel if possible
     if: ${{ strategy.job-index == steps.final-job-index.outputs.value }}
     continue-on-error: true
-    uses: OZI-Project/secure-release@1.1.1
+    uses: OZI-Project/secure-release@1.2.0
     with:
       wheel-sign-token: ${{ inputs.wheel-sign-token }}
       ozi-internal: ${{ inputs.ozi-internal }}
@@ -154,7 +154,7 @@ runs:
   - name: Build and sign sdist then wheel
     if: ${{ strategy.job-index == steps.penultimate-job-index.outputs.value }}
     id: sdist
-    uses: OZI-Project/secure-release@1.1.1
+    uses: OZI-Project/secure-release@1.2.0
     with:
       sdist: true
       wheel-sign-token: ${{ inputs.wheel-sign-token }}
