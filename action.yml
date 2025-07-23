@@ -63,10 +63,11 @@ runs:
     if: strategy.job-index == 0
     with:
       name: security2
-    
-  - run: cp -a artifact/. ./
+
+  - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
     if: strategy.job-index > 0
-    shell: bash
+    with:
+      name: release-${{ strategy.job-index }}
 
   - name: Set up Python ${{ steps.api.outputs.python-version }}
     uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
@@ -196,6 +197,7 @@ runs:
   - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
     if: strategy.job-index == 0
     with:
+      name: release-1
       include-hidden-files: true
       path: |
         !*-checkpoint/
@@ -209,6 +211,7 @@ runs:
   - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
     if: strategy.job-index > 0
     with:
+      name: release-${{ strategy.job-index+1 }}
       include-hidden-files: true
       path: |
         !artifact/
