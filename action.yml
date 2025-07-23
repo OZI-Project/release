@@ -215,9 +215,18 @@ runs:
         ./
 
   - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-    if: strategy.job-index > 0
+    if: ${{ strategy.job-index > 0 && steps.is-final-job.outcome == 'failure' }}
     with:
       name: release-${{ steps.job-id.outputs.value }}
+      include-hidden-files: true
+      path: |
+        !artifact/
+        !build/
+        ./
+
+  - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+    if: ${{ steps.is-final-job.outcome == 'success' }}
+    with:
       include-hidden-files: true
       path: |
         !artifact/
