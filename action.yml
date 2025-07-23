@@ -30,6 +30,12 @@ runs:
   using: "composite"
   steps:
 
+  - id: job-id
+    env:
+      JOB_INDEX: ${{ strategy.job-index }}
+    run: echo "value=$(($JOB_INDEX+1))" >> $GITHUB_OUTPUT
+    shell: bash
+
   - id: is-final-job
     run: |
       if [[ ${{ strategy.job-index }} == $((${{ strategy.job-total }}-1)) ]]; then
@@ -211,7 +217,7 @@ runs:
   - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
     if: strategy.job-index > 0
     with:
-      name: release-${{ strategy.job-index+1 }}
+      name: release-${{ steps.job-id.outputs.value }}
       include-hidden-files: true
       path: |
         !artifact/
