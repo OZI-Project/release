@@ -18,6 +18,8 @@ inputs:
     description: "Token to sign wheel RECORD.jws with."
     required: true
     default: ""
+  run-sigstore:
+    default: false
   ozi-internal:
     default: false
 outputs:
@@ -28,17 +30,56 @@ runs:
   using: "composite"
   steps:
 
+  - id: job-id
+    env:
+      JOB_INDEX: ${{ strategy.job-index }}
+    run: echo "value=$(($JOB_INDEX+1))" >> $GITHUB_OUTPUT
+    shell: bash
+
+  - id: is-final-job
+    env:
+      JOB_INDEX: ${{ strategy.job-index }}
+      JOB_TOTAL: ${{ strategy.job-total }}
+    run: |
+      if [[ $JOB_INDEX == $(($JOB_TOTAL-1)) ]]; then
+        exit 0; else exit 1;
+      fi
+    continue-on-error: true
+    shell: bash
+
+  - id: is-penultimate-job
+    env:
+      JOB_INDEX: ${{ strategy.job-index }}
+      JOB_TOTAL: ${{ strategy.job-total }}
+    run: |
+      if [[ $JOB_INDEX ==  $(($JOB_TOTAL-2)) ]]; then
+        exit 0; else exit 1;
+      fi
+    continue-on-error: true
+    shell: bash
+
   - name: Get OZI spec API python-version
     id: api
     env:
       PY_DIST: ${{ inputs.python-dist }}
     run: |
-      echo "python-version=$( curl -L https://oziproject.dev/api.json | jq --arg V "$PY_DIST" -c -r '.spec.python.support[$V]' )" >> $GITHUB_OUTPUT
+      arr=('security2' 'security1' 'bugfix' 'prerelease')
+      if printf '%s\n' "${arr[@]}" | grep -qx "$PY_DIST"; then       
+          echo "python-version=$( curl -L https://oziproject.dev/api.json | jq --arg V "$PY_DIST" -c -r '.spec.python.support[$V]' )" >> $GITHUB_OUTPUT
+      else
+          echo "python-version=$PY_DIST" >> $GITHUB_OUTPUT
+      fi
     shell: bash
 
   - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+    if: strategy.job-index == 0
     with:
-      name: ${{ inputs.python-dist }}
+      name: security2
+
+  - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+    if: strategy.job-index > 0
+    with:
+      name: release-${{ strategy.job-index }}
 
   - name: Set up Python ${{ steps.api.outputs.python-version }}
     uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
@@ -63,7 +104,7 @@ runs:
     shell: bash
 
   - name: Configure git repository
-    if: inputs.python-dist == 'security2'
+    if: strategy.job-index == 0
     run: |
         git config --global user.email "noreply@oziproject.dev"
         git config --global user.name "OZI Packaging"
@@ -99,25 +140,25 @@ runs:
     shell: bash
 
   - name: Setup tox invoke environment
-    if: inputs.python-dist == 'prerelease'
+    if: ${{ steps.is-final-job.outcome == 'success' }}
     run: tox -e invoke -- --list
     continue-on-error: true
     shell: bash
 
   - name: Setup tox invoke environment
-    if: contains(fromJSON('["security1", "security2", "bugfix"]'), inputs.python-dist)
+    if: ${{ steps.is-final-job.outcome == 'failure' }}
     run: tox -e invoke -- --list
     shell: bash
 
   - name: Build and sign wheel
-    if: contains(fromJSON('["security1", "security2"]'), inputs.python-dist)
+    if: ${{ steps.is-penultimate-job.outcome == 'failure' && steps.is-final-job.outcome == 'failure' }}
     uses: OZI-Project/secure-release@1.2.0
     with:
       wheel-sign-token: ${{ inputs.wheel-sign-token }}
       ozi-internal: ${{ inputs.ozi-internal }}
 
   - name: Build and sign prerelease wheel if possible
-    if: inputs.python-dist == 'prerelease'
+    if: ${{ steps.is-final-job.outcome == 'success' }}
     continue-on-error: true
     uses: OZI-Project/secure-release@1.2.0
     with:
@@ -129,7 +170,7 @@ runs:
     shell: bash
 
   - name: Build and sign sdist then wheel
-    if: inputs.python-dist == 'bugfix'
+    if: ${{ steps.is-penultimate-job.outcome == 'success' }}
     id: sdist
     uses: OZI-Project/secure-release@1.2.0
     with:
@@ -138,7 +179,7 @@ runs:
       ozi-internal: ${{ inputs.ozi-internal }}
 
   - uses: sigstore/gh-action-sigstore-python@f7ad0af51a5648d09a20d00370f0a91c3bdf8f84
-    if: inputs.python-dist == 'bugfix'
+    if: ${{ steps.is-penultimate-job.outcome == 'success' && inputs.run-sigstore == 'true' }}
     with:
       inputs: |
         dist/*.tar.gz
@@ -147,7 +188,7 @@ runs:
       upload-signing-artifacts: true
 
   - name: Move wheel signing files
-    if: inputs.python-dist == 'prerelease'
+    if: ${{ steps.is-final-job.outcome == 'success' && inputs.run-sigstore == 'true' }}
     run: |
       mkdir sig
       mv dist/*.whl.sigstore.json sig
@@ -158,7 +199,7 @@ runs:
   - name: Generate hashes for provenance
     shell: bash
     id: hash
-    if: inputs.python-dist == 'prerelease'
+    if: ${{ steps.is-final-job.outcome == 'success' }}
     run: |
       # sha256sum generates sha256 hash for all artifacts.
       # base64 -w0 encodes to base64 and outputs on a single line.
@@ -166,44 +207,35 @@ runs:
       echo "hashes=$(sha256sum ./dist/* | base64 -w0)" >> $GITHUB_OUTPUT
 
   - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-    if: inputs.python-dist == 'security2'
+    if: strategy.job-index == 0
     with:
+      name: release-1
       include-hidden-files: true
-      name: 'security1'
       path: |
         !*-checkpoint/
         !.git/config
         !signing-artifacts-*/
         !security2/
+        !artifact/
         !build/
         ./
 
   - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-    if: inputs.python-dist == 'security1'
+    if: ${{ strategy.job-index > 0 && steps.is-final-job.outcome == 'failure' }}
     with:
+      name: release-${{ steps.job-id.outputs.value }}
       include-hidden-files: true
-      name: 'bugfix'
       path: |
-        !security1/
+        !artifact/
         !build/
         ./
 
   - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-    if: inputs.python-dist == 'bugfix'
-    with:
-      include-hidden-files: true
-      name: 'prerelease'
-      path: |
-        !bugfix/
-        !build/
-        ./
-
-  - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-    if: inputs.python-dist == 'prerelease'
+    if: ${{ steps.is-final-job.outcome == 'success' }}
     with:
       include-hidden-files: true
       path: |
-        !prerelease/
+        !artifact/
         !build/
         ./
 
