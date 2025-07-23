@@ -29,21 +29,10 @@ outputs:
 runs:
   using: "composite"
   steps:
-  - id: final-job-index
-    env: 
-      JOB_TOTAL: ${{ strategy.job-total }}
-    run: echo "value=$(($JOB_TOTAL-1))" >> GITHUB_OUTPUT
-    shell: bash
-
-  - id: penultimate-job-index
-    env: 
-      JOB_TOTAL: ${{ strategy.job-total }}
-    run: echo "value=$(($JOB_TOTAL-2))" >> GITHUB_OUTPUT
-    shell: bash
 
   - id: is-final-job
     run: |
-      if [[ ${{ strategy.job-index }} == ${{ steps.final-job-index.outputs.value }} ]]; then
+      if [[ ${{ strategy.job-index }} == $((${{ strategy.job-total }}-1)) ]]; then
         exit 0; else exit 1;
       fi
     continue-on-error: true
@@ -51,7 +40,7 @@ runs:
 
   - id: is-penultimate-job
     run: |
-      if [[ ${{ strategy.job-index }} == ${{ steps.penultimate-job-index.outputs.value }} ]]; then
+      if [[ ${{ strategy.job-index }} ==  $((${{ strategy.job-total }}-2)) ]]; then
         exit 0; else exit 1;
       fi
     continue-on-error: true
