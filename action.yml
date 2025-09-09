@@ -82,7 +82,7 @@ runs:
       name: release-${{ strategy.job-index }}
 
   - name: Set up Python ${{ steps.api.outputs.python-version }}
-    uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+    uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
     with:
       cache: 'pip'
       python-version: ${{ steps.api.outputs.python-version }}
