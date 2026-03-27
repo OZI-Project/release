@@ -178,7 +178,7 @@ runs:
       wheel-sign-token: ${{ inputs.wheel-sign-token }}
       ozi-internal: ${{ inputs.ozi-internal }}
 
-  - uses: sigstore/gh-action-sigstore-python@a5caf349bc536fbef3668a10ed7f5cd309a4b53d
+  - uses: sigstore/gh-action-sigstore-python@04cffa1d795717b140764e8b640de88853c92acc
     if: ${{ steps.is-penultimate-job.outcome == 'success' && inputs.run-sigstore == 'true' }}
     with:
       inputs: |
